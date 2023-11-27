@@ -17,7 +17,7 @@ export const getUserinfo = async(req, res) => {
     // isjobseeker = boolean from the login database, get the user information.
 
     try {
-        if (role === "seeker") {
+        if (role === "s") {
             try {
                 const seeker = await Seeker.findOne({ email: mail });
                 if (!seeker) {
@@ -27,7 +27,7 @@ export const getUserinfo = async(req, res) => {
             } catch (error) {
                 return handleServerError(res, error);
             }
-        } else if (role === "provider"){
+        } else if (role === "p"){
 
             try {
                 const provider = await Provider.findOne({ email: mail });
