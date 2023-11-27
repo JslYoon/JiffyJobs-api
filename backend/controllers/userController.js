@@ -12,13 +12,12 @@ import Jobs from "../models/JobSchema.js"
 
 // get user information when called
 export const getUserinfo = async(req, res) => {
-    const isjobseeker = true
-    const isjobprovider = false
     const mail = req.params.email;
     const role = req.params.role;
     // isjobseeker = boolean from the login database, get the user information.
+
     try {
-        if (isjobseeker === true) {
+        if (role === "seeker") {
             try {
                 const seeker = await Seeker.findOne({ email: mail });
                 if (!seeker) {
@@ -28,7 +27,7 @@ export const getUserinfo = async(req, res) => {
             } catch (error) {
                 return handleServerError(res, error);
             }
-        } else if (isjobprovider === true){
+        } else if (role === "provider"){
 
             try {
                 const provider = await Provider.findOne({ email: mail });
