@@ -179,7 +179,7 @@ export const allAppliedJobs = async(req, res) => {
 
 // get all jobs posted
 export const allPostedJobs = async(req, res) => {
-    const userEmail = req.params.userEmail
+    const userEmail = req.params.email
     try {
     // Find all jobs posted by the user
     const myPostedJobs = await Jobs.find({ job_poster_email: userEmail });    
