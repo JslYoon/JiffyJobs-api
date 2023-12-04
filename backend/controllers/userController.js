@@ -273,7 +273,7 @@ export const allApplicants = async(req, res) => {
         
         const seekerEmails = seekerEmailObjects.map(obj => obj._id);
         const seekers = await Seeker.find({ email: { $in: seekerEmails } });
-        
+         
         // Add the application status to each job
         const currentDateTime = new Date();
 
