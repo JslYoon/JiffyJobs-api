@@ -273,7 +273,6 @@ export const allApplicants = async(req, res) => {
         
         const seekerEmails = seekerEmailObjects.map(obj => obj._id);
         const seekers = await Seeker.find({ email: { $in: seekerEmails } });
-
         
         // Add the application status to each job
         const currentDateTime = new Date();
@@ -284,7 +283,7 @@ export const allApplicants = async(req, res) => {
             // Determine the status based on the conditions provided
             if (jobs.acceptedApplicant === seeker.email) {
                 seekerWithStatus.status = 'accepted';
-            } else if (jobs.time[0] < currentDateTime && jobs.acceptedApplicant === "" && !jobs.rejectedApplicants.includes(userEmail)) {
+            } else if (jobs.time[0] < currentDateTime && jobs.acceptedApplicant === "" && !jobs.rejectedApplicants.includes(seeker.email)) {
                 seekerWithStatus.status = 'submitted';
             } else {
                 seekerWithStatus.status = 'rejected';
