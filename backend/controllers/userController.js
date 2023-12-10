@@ -176,11 +176,12 @@ export const allAppliedJobs = async(req, res) => {
             // Determine the status based on the conditions provided
             if (job.acceptedApplicant === userEmail) {
                 jobWithStatus.status = 'accepted';
-            } else if (job.time[0] < currentDateTime && job.hired === false && !job.rejectedApplicants.includes(userEmail)) {
+            } else if (job.time[0] > currentDateTime && job.hired === false && !job.rejectedApplicants.includes(userEmail)) {
                 jobWithStatus.status = 'submitted';
             } else {
                 jobWithStatus.status = 'rejected';
             }
+
             return jobWithStatus;
          });
 
@@ -303,7 +304,7 @@ export const withdrawApp = async(req, res) => {
         const seekerEmail = req.params.seekerEmail;
         const today = new Date();
 
-        const job = await Jobs.findOne({ _id: jobId, 'time.0': { $lt: today }, hired: false });
+        const job = await Jobs.findOne({ _id: jobId, 'time.0': { $gte: today }, hired: false });
 
         if (!job) {
             return handleNotFound(res, 'You cannot withdraw application from an in-progress job');
