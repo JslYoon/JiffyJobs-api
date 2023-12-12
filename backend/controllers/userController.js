@@ -114,6 +114,16 @@ export const applytoJobs = async (req, res) => {
           return handleNotFound(res, 'Seeker not found');
         }
 
+        // if the person posted the job applied to the job, throws an error
+        if (job.job_poster_email === seeker_email) {
+            return handleBadRequest(res, "You cannot apply to the job you posted");
+        }
+
+        // if there is someone already hired, throw error
+        if (job.hired === true) {
+            return handleBadRequest(res, "The job has already been filled")
+        }
+
         // Check if the job_id already exists in the jobs_applied array
         if (applicant.jobs_applied.some(jobApplied => jobApplied._id.toString() === job_id)) {
           return res.status(400).json({ message: 'You have already applied to this job' });
@@ -124,15 +134,7 @@ export const applytoJobs = async (req, res) => {
             job.applicants.push(seeker_email);
         }
 
-        // if there is someone already hired, throw error
-        if (job.hired === true) {
-            return handleBadRequest(res, "The job has already been filled")
-        }
-
-        // if the person posted the job applied to the job, throws an error
-        if (job.job_poster_email === seeker_email) {
-            return handleBadRequest(res, "You cannot apply to the job you posted");
-        }
+      
 
         // Add the job to the seeker's jobs_applied
         applicant.jobs_applied.push({ _id: job_id });
