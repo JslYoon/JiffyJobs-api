@@ -126,7 +126,7 @@ export const applytoJobs = async (req, res) => {
 
         // Check if the job_id already exists in the jobs_applied array
         if (applicant.jobs_applied.some(jobApplied => jobApplied._id.toString() === job_id)) {
-          return res.status(400).json({ message: 'You have already applied to this job' });
+          return res.status(400).json({ message: 'You have already applied' });
         }
 
         // Add the seeker to the job's applicants if they haven't applied already
