@@ -107,7 +107,8 @@ export const postJobs = async (req, res) => {
             acceptedApplicant: "",
             rejectedApplicants: [],
             job_poster_email: poster_email,
-            saved_applicants: []
+            saved_applicants: [],
+            withdrawn: []
         });
 
         console.log(poster_email)
