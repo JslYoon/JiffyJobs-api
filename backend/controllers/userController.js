@@ -84,7 +84,8 @@ export const updateUserInfo = async(req, res) => {
                 return handleNotFound(res, 'Provider not found');
               }
         
-              return handleSuccess(res, updatedprovider);        }
+              return handleSuccess(res, updatedprovider);       
+        }
 
     } catch(error) {
         return handleServerError(res, error);
@@ -118,6 +119,12 @@ export const applytoJobs = async (req, res) => {
         if (job.job_poster_email === seeker_email) {
             return handleBadRequest(res, "You cannot apply to the job you posted");
         }
+
+        const alreadyWithdrawn = job.withdrawn.some(withdrawn => withdrawn._id === seekerEmail);
+        if (alreadyWithdrawn) {
+            return handleBadRequest(res, "You have already withdrawn")
+        }
+
 
         // Check if the job_id already exists in the jobs_applied array
         if (applicant.jobs_applied.some(jobApplied => jobApplied._id.toString() === job_id)) {
@@ -319,7 +326,7 @@ export const allApplicants = async(req, res) => {
     }
 }
 
-
+// withdraw application
 export const withdrawApp = async(req, res) => {
     try{
         const jobId = req.params.jobId;
@@ -327,11 +334,20 @@ export const withdrawApp = async(req, res) => {
         const today = new Date();
 
         const job = await Jobs.findOne({ _id: jobId, 'time.0': { $gte: today }, hired: false });
-
         if (!job) {
             return handleNotFound(res, 'You cannot withdraw application from an in-progress job');
         }
-        await Jobs.updateOne({ _id: jobId }, { $pull: { applicants: { _id : seekerEmail} } });
+
+        const alreadyWithdrawn = job.withdrawn.some(withdrawn => withdrawn._id === seekerEmail);
+        if (alreadyWithdrawn) {
+            return handleSuccess(res, 'You have already withdrawn');
+        }
+
+        await Jobs.updateOne({ _id: jobId }, { 
+            $pull: { applicants: { _id : seekerEmail } },
+            $addToSet: { withdrawn: { _id: seekerEmail } }
+        });
+
         const seek = await Seeker.updateOne(
             { email: seekerEmail }, 
             { $pull: { jobs_applied: { _id: jobId } } }

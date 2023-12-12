@@ -68,6 +68,12 @@ const JobsSchema = new mongoose.Schema(
                 type: String,
                 required: true
             }
+        }],
+        withdrawn: [{
+            _id: {
+                type: String,
+                required: false
+            }
         }]
     }
 );
