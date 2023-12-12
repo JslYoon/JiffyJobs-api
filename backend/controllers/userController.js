@@ -119,11 +119,6 @@ export const applytoJobs = async (req, res) => {
             return handleBadRequest(res, "You cannot apply to the job you posted");
         }
 
-        // if there is someone already hired, throw error
-        if (job.hired === true) {
-            return handleBadRequest(res, "The job has already been filled")
-        }
-
         // Check if the job_id already exists in the jobs_applied array
         if (applicant.jobs_applied.some(jobApplied => jobApplied._id.toString() === job_id)) {
           return res.status(400).json({ message: 'You have already applied' });
@@ -184,7 +179,7 @@ export const allAppliedJobs = async(req, res) => {
             // Determine the status based on the conditions provided
             if (job.acceptedApplicant === userEmail) {
                 jobWithStatus.status = 'accepted';
-            } else if (job.time[0] < currentDateTime && job.acceptedApplicant === "" && !job.rejectedApplicants.includes(userEmail)) {
+            } else if (job.time[0] > currentDateTime && job.acceptedApplicant === "" && !job.rejectedApplicants.includes(userEmail)) {
                 jobWithStatus.status = 'submitted';
             } else {
                 jobWithStatus.status = 'rejected';
@@ -331,7 +326,7 @@ export const withdrawApp = async(req, res) => {
         const seekerEmail = req.params.seekerEmail;
         const today = new Date();
 
-        const job = await Jobs.findOne({ _id: jobId, 'time.0': { $lt: today }, hired: false });
+        const job = await Jobs.findOne({ _id: jobId, 'time.0': { $gte: today }, hired: false });
 
         if (!job) {
             return handleNotFound(res, 'You cannot withdraw application from an in-progress job');
