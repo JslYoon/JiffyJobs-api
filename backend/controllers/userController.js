@@ -120,7 +120,7 @@ export const applytoJobs = async (req, res) => {
             return handleBadRequest(res, "You cannot apply to the job you posted");
         }
 
-        const alreadyWithdrawn = job.withdrawn.some(withdrawn => withdrawn._id === seekerEmail);
+        const alreadyWithdrawn = job.withdrawn.some(withdrawn => withdrawn._id === seeker_email);
         if (alreadyWithdrawn) {
             return handleBadRequest(res, "You have already withdrawn")
         }
